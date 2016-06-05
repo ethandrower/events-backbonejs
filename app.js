@@ -108,6 +108,7 @@ var pubSub = new PubSub();
 
 	});
 
+
 		//single venue load detailed template.
 	var clickedVenueView = Backbone.View.extend({
 		el: "#main-container",
@@ -139,15 +140,65 @@ var pubSub = new PubSub();
 		},
 		viewChanged: function () {
 			console.log("button booked!!");
+			pubSub.events.trigger("booking-form:opened", this.model);
+			this.remove(); 
 			
-			//not sure if we need to implement this.
 		}
 
 	}); //end clickedVenueView  e
 
 
+	// show the form to fill out booking info, date time place etc.
+	var bookingFormView = Backbone.View.extend({
+		el: "#booking-form-container",
+		tagName: 'div',
+
+		template: _.template($('#booking-form-template').html()),
+
+		initialize: function(){
+			pubSub.events.on("booking-form:opened", this.venueToBook, this);
+			this.$el.html('');
+
+		},
+		events: {
+			"click #btnConfirmBook" : "bookingConfirmed"
+		},
+
+		render: function () {
+			console.log("rendering the booking form view, for confirmation");
+			
+			console.log("model is "  + this.model);
+			this.$el.html(''); //reset html;
+			this.$el.html(this.template(this.model.attributes));
+			//this.$el.show();
+			this.$("#datepicker").datepicker({
+
+			});
+			//this.$el.html(this.template(this.model.attributes));
+
+		},
+		venueToBook: function(venue) {
+			console.log("bookingFormView received message from pubSub, trying to render form...");
+
+			//this is called on the click of the previous view button
+			this.model = venue; //grab model from the calling func
+			this.render(); // render the template with our new model in place.
+		},
+
+		bookingConfirmed: function() {
+			//this is called when the confirm button is clicked, will send off to server.
+		}
+		
+
+
+
+	});
+
+
 	var app =  new AllVenuesView;
 	var clickedVenueView = new clickedVenueView();
+	var lbookingFormView = new bookingFormView();
+
 
 
 });

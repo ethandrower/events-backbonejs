@@ -6,9 +6,21 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
 <script src="underscore.js"></script>
 <script src="backbone.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
 
 <script src="app.js"></script>
 
+<script>
+
+	 $(function() {
+   $( "#datepicker" ).datepicker();
+
+     $( "party_select" ).selectmenu();
+  });
+
+	
+   
+</script>
 
 </head>
 
@@ -24,7 +36,15 @@
 	
 	
 
+
+
+
 </div>
+
+<div id="booking-form-container">
+	</div>
+
+
 <script type="text/template" id="detailed-venue-template">
 
 	<div id="detailed-venue">
@@ -56,6 +76,51 @@
 		<hr>
 	</script>
 
+
+<script type="text/template" id="booking-form-template">
+
+  <% $(function() {
+   $( "#datepicker" ).datepicker();
+
+     $( "party_select" ).selectmenu();
+  });
+  %>
+  
+
+	<div id="form-container" >
+		<form id="booking-form">
+			<input type="text">Name 
+			<input type="text">Cell Phone 
+			<p>Date: <input type="text" id="datepicker"> </p>
+
+
+
+			 <label for="party_select">Select a Party</label>
+			    <select name="speed" id="speed">
+			      <option>Slower</option>
+			      <option>Slow</option>
+			      <option selected="selected">Medium</option>
+			      <option>Fast</option>
+			      <option>Faster</option>
+			    </select>
+
+			  <label for="num_people">How many people do you expect?</label>
+			  	<select name="num_people" id="num_people">
+			  		<option>1-5</option>
+			  		<option>6-10</option>
+			  		<option>10-15</option>
+			  		<option> 15+</option>
+			  	</select>
+
+
+		</form>
+
+
+	</div>
+
+	
+
+</script>
 
 
 </body>
