@@ -1,0 +1,48 @@
+
+
+
+
+
+
+
+
+#main-container {
+	background-color: blue;
+
+	width: 100%;
+
+
+}
+
+
+
+#booking-form-container {
+	width: 100%;
+
+}
+
+
+/* for venue individual view (from home page)
+*/
+
+.single-venue {}
+
+
+h3.single-venue {
+	text-align: center;
+
+}
+
+.single-venue, .neighborhood {}
+
+
+
+
+/*  for venue detailed view */
+.detailed-venue {}
+
+
+.photo-gallery {}
+
+
+.text-details {}

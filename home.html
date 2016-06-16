@@ -3,6 +3,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <head>
+<link rel="stylesheet" type="text/css" href="styles.css">
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
 <script src="underscore.js"></script>
 <script src="backbone.js"></script>
@@ -47,17 +49,17 @@
 
 <script type="text/template" id="detailed-venue-template">
 
-	<div id="detailed-venue">
+	<div class="detailed-venue">
 
-	<div id="photo-gallery"> </div>
+	<div class="photo-gallery"> </div>
 
-	<div id="text-details"
+	<div class="text-details">
 		<ul>
-			<li> </li>
+			<li> Specific venue details will be populated here (and styled later)</li>
 
 	</div>
 
-	<button id="btnBook" type="button">Book Party</button>
+	<button class="btnBook" type="button">Book Party</button>
 
 	</div>
 
@@ -66,9 +68,9 @@
 </script>
 
 <script type="text/template" id="venue-template">
-		<div id="single-venue" >
-			<span> <%=name  %> </span>
-			<span> <%=neighborhood %> </span>
+		<div class="single-venue" >
+			<span><h3> <%=name  %> <h3> </span>
+			<span class="neighborhood"> <%=neighborhood %> </span>
 			<span> <%= type %> </span>
 			<p> <%= descriptionBrief %> </p>
 
@@ -85,7 +87,7 @@
      $( "party_select" ).selectmenu();
   });
   %>
-  
+
 
 	<div id="form-container" >
 		<form id="booking-form">

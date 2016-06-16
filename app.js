@@ -34,15 +34,29 @@ $(document).ready(function() {
 	});
 	
 	var venueCollection = Backbone.Collection.extend({
-		model: Venue
+		model: Venue,
+		url: 'http://api-birthdays.boramash.com/allvenues',
+		parse: function(data){
+			console.log("in parse function");
+			console.dir("data is " + data);
+			return data.result;
+		}
 	});
 
+
+
 	var appVenues = new venueCollection;
-	appVenues.add(venue1);
-	appVenues.add(venue2);
+	appVenues.fetch({success: function (){
+		console.log(appVenues.models.length);
+		console.dir("models " + appVenues.models);
+	}});
+	console.log("app venues length contents : " + appVenues.length);
+
+	//appVenues.add(venue1);
+	//appVenues.add(venue2);
 	console.log("venues have been added to collection:");
 
-	console.log(venue1);
+	//console.log(venue1);
 
 
 var PubSub = function() {
