@@ -18,7 +18,7 @@ $(document).ready(function() {
 	});
 
 	var venue1 = new Venue({
-		name:" First Venue",
+		name:" First Venue Bootstrap",
 		neighborhood: "River North",
 		type: "Club",
 		descriptionBrief: " Come out and spend your money at our club"
@@ -26,7 +26,7 @@ $(document).ready(function() {
 	});
 	
 	var venue2 = new Venue({
-		name:" Second Venue",
+		name:" Second Venue Bootstrap",
 		neighborhood: "WrigleyVille",
 		type: "Bar",
 		descriptionBrief: " Come out and spend your money at our bar"
@@ -36,24 +36,26 @@ $(document).ready(function() {
 	var venueCollection = Backbone.Collection.extend({
 		model: Venue,
 		url: 'http://api-birthdays.boramash.com/allvenues',
+		
 		parse: function(data){
 			console.log("in parse function");
-			console.dir("data is " + data);
-			return data.result;
+			
+			console.log("data result is " + data.result);
+			return jQuery.parseJSON(data.result);
 		}
 	});
 
 
+var appVenues = new venueCollection;
 
-	var appVenues = new venueCollection;
-	appVenues.fetch({success: function (){
-		console.log(appVenues.models.length);
-		console.dir("models " + appVenues.models);
-	}});
-	console.log("app venues length contents : " + appVenues.length);
 
-	//appVenues.add(venue1);
-	//appVenues.add(venue2);
+
+	
+
+	//console.log("app venues length contents : " + appVenues.length);
+
+	appVenues.add(venue1);
+	appVenues.add(venue2);
 	console.log("venues have been added to collection:");
 
 	//console.log(venue1);
@@ -73,6 +75,22 @@ var pubSub = new PubSub();
 
 		initialize: function() {
 		// get data but we have it loaded so just render
+		console.log("calling render function of allvenuesview");
+
+		this.listenTo(appVenues, 'reset', this.render);
+
+		appVenues.fetch({reset: true, success: function (model, response, options){
+		console.log(appVenues.models.length);
+		console.dir("models " + appVenues.models);
+		console.dir("reset with model " + model);
+		
+		//appVenues.reset();
+
+
+		}
+
+		});
+
 		this.render();
 		},
 
@@ -81,6 +99,7 @@ var pubSub = new PubSub();
 			this.$el.html('');
 
 			appVenues.each(function(model){
+				console.log("rendering a venue...");
 
 				var venue = new SingleVenueView({
 					model: model
@@ -93,6 +112,7 @@ var pubSub = new PubSub();
 		}
 
 	});
+
 
 
 	var SingleVenueView = Backbone.View.extend({
@@ -210,6 +230,8 @@ var pubSub = new PubSub();
 
 
 	var app =  new AllVenuesView;
+	//AllVenuesView.render();
+
 	var clickedVenueView = new clickedVenueView();
 	var lbookingFormView = new bookingFormView();
 
