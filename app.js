@@ -17,6 +17,26 @@ $(document).ready(function() {
 
 	});
 
+	var Booking = Backbone.Model.extend({
+		
+
+		defaults: {
+
+				"venue" :  "venue passed in somehow...",
+				"customer_name": "name",
+				"customer_phone": "phone",
+				"date": "date",
+				"party_type": "type",
+				"party_num_people": "number of people",
+				"booking_url":"file:///Users/user/Desktop/javascript/birthdays/booking/"
+
+		},
+		url: 'http://api-birthdays.boramash.com/booking'
+		
+
+
+	});
+
 	var venue1 = new Venue({
 		name:" First Venue Bootstrap",
 		neighborhood: "River North",
@@ -44,6 +64,8 @@ $(document).ready(function() {
 			return jQuery.parseJSON(data.result);
 		}
 	});
+
+
 
 
 var appVenues = new venueCollection;
@@ -173,7 +195,7 @@ var pubSub = new PubSub();
 			this.render();
 		},
 		viewChanged: function () {
-			console.log("button booked!!");
+			console.log("button  Book Party was clicked");
 			pubSub.events.trigger("booking-form:opened", this.model);
 			this.remove(); 
 			
@@ -221,19 +243,128 @@ var pubSub = new PubSub();
 
 		bookingConfirmed: function() {
 			//this is called when the confirm button is clicked, will send off to server.
+			//get form vars here
+
+			var bookingModel = new Booking({
+
+				"venue" :  "venue passed in somehow...",
+				"customer_name": $("#customer_name").val(),
+				"customer_phone": $("#customer_phone").val(),
+				"date": $("#datepicker").val(),
+				"party_type": $("#party_type").val(),
+				"party_num_people": $("#party_num_people").val(),
+
+
+			});
+			console.log("cid before save is " + bookingModel.cid);
+			console.log("id before save is " +  bookingModel.id);
+			//create a new model to hold a 'booking'  (bookingModel)
+			//save that the web service
+			//trigger event change view
+			console.log("btnConfirmBook clicked!");
+			pubSub.events.trigger("booking-confirmed:opened", bookingModel);
+			bookingModel.save(null, {  success: function (model, response, options){
+
+
+				console.log("response booking id " + response.booking_id);
+				
+
+
+				console.dir("response is " + response);
+				console.log("response id is " + response.id);
+				console.dir("model is " + model);
+				console.log("model id from res is " + model.id);
+
+					console.log("modell.get id " + model.get("id"));
+			
+
+			bookingModel.set("booking_url", "file:///Users/user/Desktop/javascript/birthdays/booking/" + bookingModel.get("id")) ;
+			console.log("booking url set to " + bookingModel.get("booking_url"));
+
+
+
+			}
+
+
+
+			});
+		
+			this.remove(); //drop this view since we are changing to the next.
 		}
 		
 
-
-
 	});
 
+
+	var confirmationPage = Backbone.View.extend({
+		el: "#confirmation-page-container",
+		tagName: 'div',
+
+		template: _.template($('#confirmation-page-template').html()),
+
+		initialize: function(){
+			pubSub.events.on("booking-confirmed:opened", this.showBookingConfirmation, this);
+			this.$el.html('');
+
+		},
+		events: {
+			//"click #btnConfirmBook" : "bookingConfirmed"
+		},
+
+		render: function () {
+			console.log("rendering the booking form view, for confirmation");
+			
+			console.log("model is "  + this.model);
+			this.$el.html(''); //reset html;
+			this.$el.html(this.template(this.model.attributes));
+
+		},
+
+		//called via pubsub subscription
+		showBookingConfirmation: function(booking) {
+
+			this.model = booking;
+			this.render();
+		}
+
+
+	})
+
+
+
+	// guest sign up view (custom link)
+	/* this will be @ route    birthdays/home.html/party/:id_of_party
+		the route will need to grab the right party by id from the web service
+		then load the view passing that model into  the view.
+		*/
+
+	var myRouter = Backbone.Router.extend({
+
+		initialize: function() {
+			//init a view for the guest sign up "event page view" 
+		},
+		routes: {
+			"eventpage/:id" : "loadeventpage"
+		},
+
+		loadeventpage: function() {
+			//this.view_we_inited.render()  
+
+			// fetch model with the id  from teh route
+
+			//maybe jsut pubsub events trigger for the eventpage, pass the model
+
+
+		}
+
+
+	})
 
 	var app =  new AllVenuesView;
 	//AllVenuesView.render();
 
 	var clickedVenueView = new clickedVenueView();
-	var lbookingFormView = new bookingFormView();
+	var bookingFormView = new bookingFormView();
 
 
 

@@ -5,20 +5,18 @@
 <head>
 <link rel="stylesheet" type="text/css" href="styles.css">
 
+<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
 <script src="underscore.js"></script>
 <script src="backbone.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
 
 <script src="app.js"></script>
+<script src="slider.js"></script>
 
 <script>
 
-	 $(function() {
-   $( "#datepicker" ).datepicker();
-
-     $( "party_select" ).selectmenu();
-  });
 
 	
    
@@ -51,7 +49,20 @@
 
 	<div class="detailed-venue">
 
-	<div class="photo-gallery"> </div>
+		<div class="slider-venue">
+
+		
+		  <% _.each(image_sources, function(image){  %>
+		  		<img class="mySlides" src="<%=image %> " style="width:100%; display: none">
+
+		<%  })  %>
+		 <% initLoadSlider(); %>
+
+		 <a class="w3-btn-floating" style="position:absolute;top:45%;left:0" onclick="plusDivs(-1)">❮</a>
+		<a class="w3-btn-floating" style="position:absolute;top:45%;right:0" onclick="plusDivs(1)">❯</a>
+
+		</div>
+
 
 	<div class="text-details">
 		<ul>
@@ -59,7 +70,7 @@
 
 	</div>
 
-	<button class="btnBook" type="button">Book Party</button>
+	<button id="btnBook" type="button">Book Party</button>
 
 	</div>
 
@@ -68,11 +79,17 @@
 </script>
 
 <script type="text/template" id="venue-template">
-		<div class="single-venue" >
+	<div class="single-venue" >
+
+
 			<span><h3> <%=name  %> <h3> </span>
 			<span class="neighborhood"> <%=neighborhood %> </span>
 			<span> <%= type %> </span>
 			<p> <%= descriptionBrief %> </p>
+
+		
+
+
 
 		</div>
 		<hr>
@@ -95,35 +112,34 @@
 			<input type="text">Cell Phone 
 			<p>Date: <input type="text" id="datepicker"> </p>
 
-
-
 			 <label for="party_select">Select a Party</label>
-			    <select name="speed" id="speed">
-			      <option>Slower</option>
-			      <option>Slow</option>
-			      <option selected="selected">Medium</option>
-			      <option>Fast</option>
-			      <option>Faster</option>
+			    <select name="Party Type" id="party_type">
+			      <option>Party 1</option>
+			      <option>Party 2</option>
+			      <option selected="selected">Party 3</option>
+			      <option> Party 4</option>
+			     
 			    </select>
 
 			  <label for="num_people">How many people do you expect?</label>
-			  	<select name="num_people" id="num_people">
+			  	<select name="num_people" id="party_num_people">
 			  		<option>1-5</option>
 			  		<option>6-10</option>
 			  		<option>10-15</option>
 			  		<option> 15+</option>
 			  	</select>
 
-
 		</form>
-
-
+		<button id="btnConfirmBook" type="button">Confirm </button>
 	</div>
-
-	
-
 </script>
 
+<script type="text/template" id="confirmation-page-template">
+<div id="confirmpation-page-container">
+<h2>Your booking url is: <%=booking_url %> </h2>
+
+
+</script>
 
 </body>
 
