@@ -4,20 +4,27 @@ import pymongo
 from pymongo import MongoClient
 from flask import jsonify
 import uuid
+import json
 
 
+# port 9090 running
+# domain is api-birthdays.boramash.com
 app = Flask(__name__)
 api = Api(app)
 
 client = MongoClient('localhost', 2800)
-db = client.rolodextor
+db = client.birthdays
+
+mailgun_key = ''
+mailgun_sandbox = ''
+mailgun_url = 'https://api.mailgun.net/{0}'.format(mailgun_sandbox)
 
 
 class Venue(Resource):
 
   def get(self, venue_id):
-    rel = db.relationships.find_one({"venue_id": rel_id})
-    return jsonify({"result" : dumps(relationship)})    
+    rel = db.relationships.find_one({"venue_id": venue_id})
+    return jsonify({"result" : json.dumps(rel)})    
 
 # Don't need these other ones quite yet, will add to db manually.
 """
@@ -42,26 +49,39 @@ class Venue(Resource):
 class AllVenues(Resource):
   #ultimately will also be able to take filters (prioritize list of venues returned)
   def get(self):
-
-    venues = db.venues.find({{})
-    return = jsonify({"result" : dumps(venues)})
+    venues = []
+    for ven in  db.venues.find({}, {'_id': False}):
+      print(ven) 
+      venues.append(ven)
+    return  jsonify({"result" : json.dumps(venues)})
 
 
 class Booking(Resource):
-  def get(self, booking_id):
-    pass   # not neeeded quite yet.
-
+  def get(self):
+    return "success!"
 
   def post(self):  # for creating a new booking
+    res = request.get_json()
+    print(str(res))
+    print(str(request.form))
+    for k,v in request.form.items():
+      print (k, v) 
     booking_id = str(uuid.uuid4())
-    booking = {"booking_id": booking_id, "booking_date": request.form["date"], "booking_venue": request.form["venue_id"], "booking_memberslist", {}, "booking_member_estimate": request.form["estimated_guests"], "booking_user": request.form["user_id"] } 
-  
+    booking = {"booking_id": booking_id, "booking_date": res["date"], "venue": res["venue"], "booking_memberslist": [], "party_num_people": res["party_num_people"], "customer_name": res["customer_name"], "customer_phone": res["customer_phone"], "party_type": res["party_type"]  } 
+ 
     res  = db.bookings.insert(booking)
-    return jsonify({"result": dumps(res)})
+    return jsonify({"result": json.dumps(str(res)), "booking_id": booking_id })
+
+
+  def sendConfirmations(email):
+    pass
+    # send email to us, and to customer
+
+
 
 class User(Resource):
   def get(self, user_id):
-    pass
+    return "success"
 
   def post(self):
     user_id = str(uuid.uuid4())
@@ -74,11 +94,11 @@ class User(Resource):
 
 
 api.add_resource(Venue, '/<string:venue_id>')
-api.add_resource(AllVenues, '/')
-api.add_resource(Booking, '/')
+api.add_resource(AllVenues, '/allvenues')
+api.add_resource(Booking, '/booking')
 
 
-if __name == '__main__':
-  app.run(debug=True)
+if __name__ == '__main__':
+  app.run(port=9090, debug=True)
 
 
