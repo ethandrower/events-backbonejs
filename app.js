@@ -394,11 +394,20 @@ var guestRegisterView = Backbone.View.extend({
 			//init a view for the guest sign up "event page view" 
 		},
 		routes: {
+			"" : "loadhomepage",
+
 			"eventpage/:id" : "loadeventpage"
 		},
+
+		loadhomepage: function() {
+			console.log("homepage view loading");
+			var app =  new AllVenuesView;
+
+		},
+
 		loadeventpage: function(booking_id) {
 			//this.view_we_inited.render()  
-			
+
 			// fetch model with the id  from teh route
 			console.log("router has been called! booking id is " + booking_id);
 			
@@ -426,7 +435,7 @@ var guestRegisterView = Backbone.View.extend({
 
 	 Backbone.history.start();
 
-	var app =  new AllVenuesView;
+//	var app =  new AllVenuesView;
 	//AllVenuesView.render();
 
 	var clickedVenueView = new clickedVenueView();
