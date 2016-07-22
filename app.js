@@ -28,10 +28,18 @@ $(document).ready(function() {
 				"date": "date",
 				"party_type": "type",
 				"party_num_people": "number of people",
-				"booking_url":"file:///Users/user/Desktop/javascript/birthdays/booking/"
+				"booking_url": "file:///Users/user/Desktop/javascript/birthdays/booking/"
 
 		},
-		url: 'http://api-birthdays.boramash.com/booking'
+		url: 'http://api-birthdays.boramash.com/booking',
+		
+
+		parse: function(data){
+			console.log("in parse function for booking");
+			
+			console.log("data result is " + data.result);
+			return jQuery.parseJSON(data.result);
+		}
 		
 
 
@@ -253,6 +261,7 @@ var pubSub = new PubSub();
 				"date": $("#datepicker").val(),
 				"party_type": $("#party_type").val(),
 				"party_num_people": $("#party_num_people").val(),
+				"booking_url": "origin"
 
 
 			});
@@ -262,34 +271,40 @@ var pubSub = new PubSub();
 			//save that the web service
 			//trigger event change view
 			console.log("btnConfirmBook clicked!");
-			pubSub.events.trigger("booking-confirmed:opened", bookingModel);
+			
 			bookingModel.save(null, {  success: function (model, response, options){
 
 
-				console.log("response booking id " + response.booking_id);
 				
 
+				//this one works!
+				console.log("response booking id " + response.booking_id);
 
-				console.dir("response is " + response);
-				console.log("response id is " + response.id);
-				console.dir("model is " + model);
-				console.log("model id from res is " + model.id);
 
-					console.log("modell.get id " + model.get("id"));
+
+				
+				//something is up with setting it...
+				bookingModel.set("booking_url", "file:///Users/user/Desktop/javascript/birthdays/booking/" + response.booking_id ) ;
+				bookingModel.save(null, {success: function(model, response, options){
+					
+					console.log("booking model url after save " + bookingModel.get("booking_url"));
+					pubSub.events.trigger("booking-confirmed:opened", bookingModel);
+				}
+
+
+				});
+
+
 			
 
-			bookingModel.set("booking_url", "file:///Users/user/Desktop/javascript/birthdays/booking/" + bookingModel.get("id")) ;
-			console.log("booking url set to " + bookingModel.get("booking_url"));
-
-
-
+			 //drop this view since we are changing to the next.
 			}
-
 
 
 			});
 		
-			this.remove(); //drop this view since we are changing to the next.
+			this.remove();
+
 		}
 		
 
@@ -301,9 +316,9 @@ var pubSub = new PubSub();
 		tagName: 'div',
 
 		template: _.template($('#confirmation-page-template').html()),
-
 		initialize: function(){
 			pubSub.events.on("booking-confirmed:opened", this.showBookingConfirmation, this);
+			console.log("In init of confirmation page...");
 			this.$el.html('');
 
 		},
@@ -322,15 +337,50 @@ var pubSub = new PubSub();
 
 		//called via pubsub subscription
 		showBookingConfirmation: function(booking) {
-
+			console.log("in show bookingconfirmation method");
+			
 			this.model = booking;
+			console.log("bootking url passed to conf page view is " + booking.get("booking_url"));
+
 			this.render();
 		}
 
 
-	})
+	});
+
+var guestRegisterView = Backbone.View.extend({
+		el: "#guest-register-container",
+		tagName: 'div',
+
+		template: _.template($('#guest-register-template').html()),
+
+		initialize: function(){
+			pubSub.events.on("guest-register:opened", this.getBooking, this);
+			this.$el.html('');
+
+		},
+		events: {
+			"click #btnConfirmBook" : "bookingConfirmed"
+		},
+
+		render: function () {
+			console.log("rendering the booking form view, for confirmation");
+			
+			console.log("model is "  + this.model);
+			this.$el.html(''); //reset html;
+			this.$el.html(this.template(this.model.attributes));
+			//this.$el.show();
+			
 
 
+		},getBooking: function(booking) {
+			console.log("bookingFormView received message from pubSub, trying to render form...");
+
+			//this is called on the click of the previous view button
+			this.model = booking; 
+			this.render(); 
+		}
+	});
 
 	// guest sign up view (custom link)
 	/* this will be @ route    birthdays/home.html/party/:id_of_party
@@ -346,25 +396,42 @@ var pubSub = new PubSub();
 		routes: {
 			"eventpage/:id" : "loadeventpage"
 		},
-
-		loadeventpage: function() {
+		loadeventpage: function(booking_id) {
 			//this.view_we_inited.render()  
-
+			
 			// fetch model with the id  from teh route
+			console.log("router has been called! booking id is " + booking_id);
+			
+			this.booking = new Booking({id: booking_id});
+			this.booking.fetch( {data: {"booking_id": booking_id}, success: function(model, response, options) {
 
-			//maybe jsut pubsub events trigger for the eventpage, pass the model
+				pubSub.events.trigger("guest-register:opened", this.booking);
 
+				}
+			});
 
 		}
 
 
-	})
+	});
+
+	 var router = new myRouter;
+	/* router.on('route:loadeventpage', function(post_id){
+	 	console.log("sload event route called");
+
+	 	alert("id passed was " + post_id);
+
+
+	 }); */
+
+	 Backbone.history.start();
 
 	var app =  new AllVenuesView;
 	//AllVenuesView.render();
 
 	var clickedVenueView = new clickedVenueView();
 	var bookingFormView = new bookingFormView();
+	var bookingConfirmationView = new confirmationPage();
 
 
 
