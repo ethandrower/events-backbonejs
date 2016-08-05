@@ -46,6 +46,16 @@
 
 	</div>
 
+<div id="confirmation-container">
+
+</div>
+
+<div id="guest-view-container">
+
+	</div>
+
+
+
 
 <script type="text/template" id="detailed-venue-template">
 
@@ -136,9 +146,12 @@
 	</div>
 </script>
 
+
 <script type="text/template" id="confirmation-page-template">
 	<div id="confirmpation-page-container">
-	<h2>Your booking url is: <%=booking_url %> </h2>
+	<h1>Congrats! you are are booked!! </h1>
+
+	<h2>Your booking url is:<a id="goToParty" > <%=booking_url %></a> </h2>
 
 	</div>
 	
@@ -148,11 +161,25 @@
 	<div id="guest-register-container">
 	<h2>This is an individual party view! </h2>
 
+	<form id="register-form">
+		<label for="guest_name">Your Name</label>
+		<input id="guest_name" type="text">
+
+		<label for="guest_phone">Your Cell</label>
+		<input  id="guest_phone" type="text">
+
+
+
+	</form>
+	<button id="btn_register_guest" type="button" class="btn-primary">RSVP</button>
+	
+
+
 	<ul class="list-group">
 
-	<% _each(guests, function(guest) { %>
+	<% _.each(booking_memberslist, function(guest) { %>
 
-		<li class="list-group-item"> <%= guest["name"] %> </li>
+		<li class="list-group-item"> <%= guest["guest_name"] %> </li>
 
 	<% }); %>
 
