@@ -1,0 +1,221 @@
+
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<head>
+<link rel="stylesheet" type="text/css" href="styles.css">
+
+<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+<script src="underscore.js"></script>
+<script src="backbone.js"></script>
+
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+
+
+<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+
+<script src="app.js"></script>
+<script src="slider.js"></script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+</head>
+
+<body>
+
+
+<h3>Birthday Party Venues </h3>
+
+
+
+<!-- templates -->
+
+<div id="main-container" class="container">
+	
+	
+
+
+
+
+</div>
+
+
+<!-- might need to put this somewhere inside the container -->
+<div id="booking-form-container" class="container">
+
+	</div>
+
+<div id="confirmation-container" class="container">
+
+</div>
+
+<div id="guest-view-container" class="container">
+
+	</div>
+
+
+
+
+<script type="text/template" id="detailed-venue-template">
+
+	<div class="detailed-venue">
+
+	<div class="venue-intro">
+		<h3><%= name %></h3>
+		<h4><%=neighborhood %> </h4>
+
+
+	</div>
+
+
+		<div class="slider-venue">
+
+		
+		  <% _.each(image_sources, function(image){  %>
+		  		<img class="mySlides" src="<%=image %> " style="width:100%; display: none">
+
+		<%  }); %>
+		 <% initLoadSlider(); %>
+
+		 <a class="w3-btn-floating" style="position:absolute;top:45%;left:0; " onclick="plusDivs(-1)"> < </a>
+		<a class="w3-btn-floating" style="position:absolute;top:45%;right:0" onclick="plusDivs(1)"> > </a>
+
+		</div>
+
+
+	<div class="text-details">
+		<ul>
+			<li> Specific venue details will be populated here (and styled later)</li>
+
+	</div>
+
+	<button id="btnBook" class="btn btn-primary btn-block" type="button">Book Party</button>
+
+	</div>
+
+
+
+</script>
+
+<script type="text/template" id="venue-template">
+	<div class="single-venue" >
+
+			<img   src="<%=image_sources[0]%>" </img>
+			<span><h3> <%=name  %> <h3> </span>
+			<span class="neighborhood"> <%=neighborhood %> </span>
+			<span> <%= type %> </span>
+			<p> <%= descriptionBrief %> </p>
+
+		
+
+
+
+		</div>
+		<hr>
+	</script>
+
+
+<script type="text/template" id="booking-form-template">
+
+  <% $(function() {
+   $( "#datepicker" ).datepicker();
+
+     $( "party_select" ).selectmenu();
+  });
+  %>
+
+
+	<div id="form-container" >
+		<form id="booking-form">
+
+
+		<div class="form-group">
+			
+	
+			<label for="name">Name:</label>
+			<input type="text" class="form-control" id="name">
+
+			<label for="cell">Cell Phone:</label>
+			<input type="text" class="form-control" id="cell">
+
+		</div>
+
+		<div class="form-group">
+			<label for="datepicker">Date:</label>
+			<input type="text" class="form-control" id="datepicker">
+
+			 <label for="party_select">Select a Party</label>
+			    <select name="Party Type" id="party_type" class="form-control">
+			      <option>Party 1</option>
+			      <option>Party 2</option>
+			      <option selected="selected">Party 3</option>
+			      <option> Party 4</option>
+			     
+			    </select>
+
+			  <label for="num_people">How many people do you expect?</label>
+			  	<select name="num_people" id="party_num_people" class="form-control">
+			  		<option>1-5</option>
+			  		<option>6-10</option>
+			  		<option>10-15</option>
+			  		<option> 15+</option>
+			  	</select>
+		</div>
+
+		</form>
+		<button id="btnConfirmBook" type="button" class="btn btn-default" >Confirm </button>
+	</div>
+</script>
+
+
+<script type="text/template" id="confirmation-page-template">
+	<div id="confirmpation-page-container">
+	<h1>Congrats! you are are booked!! </h1>
+
+	<h2>Your booking url is:<a id="goToParty" > <%=booking_url %></a> </h2>
+
+	</div>
+	
+</script>
+
+<script type="text/template" id="guest-register-template">
+	<div id="guest-register-container">
+	<h2>This is an individual party view! </h2>
+
+	<form id="register-form">
+		<label for="guest_name">Your Name</label>
+		<input id="guest_name" type="text">
+
+		<label for="guest_phone">Your Cell</label>
+		<input  id="guest_phone" type="text">
+
+
+
+	</form>
+	<button id="btn_register_guest" type="button" class="btn-primary">RSVP</button>
+	
+
+
+	<ul class="list-group">
+
+	<% _.each(booking_memberslist, function(guest) { %>
+
+		<li class="list-group-item"> <%= guest["guest_name"] %> </li>
+
+	<% }); %>
+
+	</ul>
+
+	</div>
+	
+</script>
+
+</body>
+
+</html>
