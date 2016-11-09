@@ -56,9 +56,19 @@ class AllVenues(Resource):
     return  jsonify({"result" : json.dumps(venues)})
 
 
+
+
 class Booking(Resource):
   def get(self):
-    return "success!"
+    res = db.bookings.find_one({"booking_id": request.args["booking_id"]})
+    print("res found!" + str(res))
+    print("printing reqest args booking_id" + request.args["booking_id"] )  
+    val = {}
+    #for booking in res:
+    #val = booking
+    res["_id"] = str(res["_id"])  
+    #return jsonify({"result": res})
+    return {"result": res } 
 
   def post(self):  # for creating a new booking
     res = request.get_json()
@@ -72,6 +82,12 @@ class Booking(Resource):
     res  = db.bookings.insert(booking)
     return jsonify({"result": json.dumps(str(res)), "booking_id": booking_id })
 
+
+  def put(self, booking_id):
+    print("booking id is passed ? " + booking_id) 
+    print("received put request to update a booking, booking id is : " + request.args["booking_id"]) 
+    print("maybe json is sent ? " + request.get_json() )
+    return "test return"
 
   def sendConfirmations(email):
     pass
@@ -89,14 +105,21 @@ class User(Resource):
     res = db.users.insert(user)
     return jsonify({"result" : dumps(res)})
 
+class BookingUpdate(Resource):
+  def put(self):
+    print("in put handling for booking update")
+    #print("request json is " + request.get_json() ) 
+    req = request.get_json()
 
+    db.bookings.update( {"booking_id": request.args["booking_id"] }, { "$set":  {"booking_memberslist" : req["booking_memberslist"]} }) 
+    return "success" 
 
 
 
 api.add_resource(Venue, '/<string:venue_id>')
 api.add_resource(AllVenues, '/allvenues')
 api.add_resource(Booking, '/booking')
-
+api.add_resource(BookingUpdate, '/booking-update')
 
 if __name__ == '__main__':
   app.run(port=9090, debug=True)
